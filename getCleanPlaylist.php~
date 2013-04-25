@@ -1,0 +1,14 @@
+<?php
+	if(!isset($_REQUEST['uri'])){
+		echo "No URI given!";
+	}
+	
+	$uri = $_REQUEST['uri'];
+	$command = "/usr/bin/perl /var/www/spottube/spotify-scrape.pl '$uri'";
+	exec($command, $output);
+	echo "<ul>";
+	foreach($output as &$value) {
+		echo "<li>$value</li>";
+	}
+	echo "</ul>";
+?>

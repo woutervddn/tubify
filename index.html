@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Tubify | A webvi.be production</title>
+        <meta name="description" content="Tubify converts your spotify uri's to youtube links. Fast, straightforward, hasslefree!">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+	<header>
+		<div class="container">
+			<a href="./index.html"><img src="./img/logo.png" /></a>
+		</div>
+	</header>
+
+	<div class="main container">
+		<form name="tubify-form" id="tubify-form" action="" method="POST">
+			<div class="input-box-container">
+		
+				<input type="text" name="uri" placeholder="Paste your spotify URI here."><input type="submit" value="Tubify">
+			</div>
+			<div class="option-box-container">
+				<span>Or get:</span><a id="HRL" class="button">Human readable links</a><a id="PL" class="button">Playlist titles</a><a id="PLN" class="button">Playlist titles width no.</a>
+				<div style="float: right;">
+					<!-- AddThis Button BEGIN -->
+					<div class="addthis_toolbox addthis_default_style ">
+					<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+					<a class="addthis_button_tweet"></a>
+					<a class="addthis_button_pinterest_pinit"></a>
+					<a class="addthis_counter addthis_pill_style"></a>
+					</div>
+					<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51791cce0913ba9a"></script>
+					<!-- AddThis Button END -->
+				</div>
+
+			</div>
+		</form>
+
+		<div class="response-box">
+			<div id="spot-title">The tubes are not connected yet</div>
+			<div id="spot-response">
+			</div>
+		</div>
+	</div>
+
+	<footer>
+	<div class="container">
+		<div style="float: right;">
+		produced by: <a href="http://webvi.be" target="_blank"><div class="webvibelogo2"><span></span></div></a>
+	<style>.webvibelogo2{height: 16px;width: 90px;background: url('http://webvi.be/webvibex32.png') 0 -17px no-repeat;background-size: 90px 32px;}.webvibelogo2:hover{background-position: 0 0;}.webvibelogo2 span {display: block;background: url("http://webvi.be/shine.png") -100px -50px no-repeat;-webkit-transition-property: all;-webkit-transition-duration: .8s;transition-property: all;transition-duration: .8s;margin-top: 4px;height: 16px;width: 90px;border-radius: 50%;}.webvibelogo2:hover span {background-position: 150px 50px;}</style>
+		</div>
+	</div>
+	</footer>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+
+	<script>
+		$(document).ready(function(){
+		    $j('a.button').click(function(){
+			//$j(this).toggleClass("down");
+		    });
+		    $j("#spot-response").slideUp('slow');
+		});
+
+		function getTitle() {
+			$j.ajax({
+					type: "POST",
+					url: "./api/getTitle.php",
+					data: $j("#tubify-form").serialize(),
+					success: function(theDataReturned) {
+						$j("#spot-title").html(theDataReturned);
+					}
+				}); 	
+		}
+
+		var $j = jQuery.noConflict();
+            	$j("#tubify-form").submit(function(event){
+        
+				$j("#spot-response").slideDown('slow', function(){
+				    $j(this).html('<div style="text-align: center;"><span><b>Note:</b>Tubifying long playlists can take a while!</span><br /><img src="img/animation.gif" /></div>');
+				});
+				event.preventDefault();
+				getTitle();
+				$j.ajax({
+					type: "POST",
+					url: "./api/getClickableLinks.php",
+					data: $j("#tubify-form").serialize(),
+					success: function(theDataReturned) {
+						$j("#spot-response").slideUp('slow', function(){
+						    $j(this).html(theDataReturned);
+					    }).delay(400).slideDown('slow');
+					}
+				}); 	
+
+			});
+
+		$j("#HRL").click(function(event){
+        
+				$j("#spot-response").slideDown('slow', function(){
+				    $j(this).html('<div style="text-align: center;"><span><b>Note:</b>Tubifying long playlists can take a while!</span><br /><img src="img/animation.gif" /></div>');
+				});
+			
+				event.preventDefault();
+				getTitle();
+				$j.ajax({
+					type: "POST",
+					url: "./api/getReadableLinks.php",
+					data: $j("#tubify-form").serialize(),
+					success: function(theDataReturned) {
+						$j("#spot-response").slideUp('slow', function(){
+						    $j(this).html(theDataReturned);
+					    }).delay(400).slideDown('slow');
+					}
+				}); 	
+
+			});
+
+		$j("#PL").click(function(event){
+        
+				$j("#spot-response").slideDown('slow', function(){
+				    $j(this).html('<div style="text-align: center;"><span><b>Note:</b>Tubifying long playlists can take a while!</span><br /><img src="img/animation.gif" /></div>');
+				});
+			
+				event.preventDefault();
+				getTitle();
+				$j.ajax({
+					type: "POST",
+					url: "./api/getCleanPlaylist.php",
+					data: $j("#tubify-form").serialize(),
+					success: function(theDataReturned) {
+						$j("#spot-response").slideUp('slow', function(){
+						    $j(this).html(theDataReturned);
+					    }).delay(400).slideDown('slow');
+					}
+				}); 	
+
+			});
+		$j("#PLN").click(function(event){
+        
+				$j("#spot-response").slideDown('slow', function(){
+				    $j(this).html('<div style="text-align: center;"><span><b>Note:</b>Tubifying long playlists can take a while!</span><br /><img src="img/animation.gif" /></div>');
+				});
+			
+				event.preventDefault();
+				getTitle();
+				$j.ajax({
+					type: "POST",
+					url: "./api/getPlaylist.php",
+					data: $j("#tubify-form").serialize(),
+					success: function(theDataReturned) {
+						$j("#spot-response").slideUp('slow', function(){
+						    $j(this).html(theDataReturned);
+					    }).delay(400).slideDown('slow');
+					}
+				}); 	
+
+			});
+	</script>
+
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+
+        <script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>
+    </body>
+</html>
